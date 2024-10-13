@@ -1,0 +1,14 @@
+{
+  "CAPITAL_WITH_LOWER_FEES": "Capital with Lower Fees (-1%)",
+  "CAPITAL_WITH_BASE_FEES": "Capital with Base Fees",
+  "CAPITAL_WITH_HIGHER_FEES": "Capital with Higher Fees (+1%)",
+  "CHART_TITLE": "Capital Growth Over Time with Varying Fees",
+  "YEARS_LABEL": "Years",
+  "CAPITAL_VALUE_LABEL": "Capital Value",
+  "WATCH_FEES": "Watch your fees",
+  "INVESTED_CAPITAL_LABEL": "Invested capital ({{ currencySymbol }})",
+  "INVESTMENT_PERIOD_LABEL": "Investment period (years)",
+  "YEARLY_PERFORMANCE_LABEL": "Yearly performance (%)",
+  "FEES_LABEL": "Fees (%)",
+  "FEE_RATE_MESSAGE": "At a fee rate of {{ feeRate }}%, you’ll hand over your entire capital of {{ capital }}$ in just {{ years }} years making the fee collectors rich while you wonder where your money went!"
+}

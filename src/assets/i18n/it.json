@@ -1,0 +1,14 @@
+{
+  "CAPITAL_WITH_LOWER_FEES": "Capitale con Spese Inferiori (-1%)",
+  "CAPITAL_WITH_BASE_FEES": "Capitale con Spese Base",
+  "CAPITAL_WITH_HIGHER_FEES": "Capitale con Spese Maggiori (+1%)",
+  "CHART_TITLE": "Crescita del Capitale nel Tempo con Spese Variabili",
+  "YEARS_LABEL": "Anni",
+  "CAPITAL_VALUE_LABEL": "Valore del Capitale",
+  "WATCH_FEES": "Occhio alle spese",
+  "INVESTED_CAPITAL_LABEL": "Capitale investito ({{ currencySymbol }})",
+  "INVESTMENT_PERIOD_LABEL": "Periodo di investimento (anni)",
+  "YEARLY_PERFORMANCE_LABEL": "Rendimento annuale (%)",
+  "FEES_LABEL": "Spese (%)",
+  "FEE_RATE_MESSAGE": "Con un tasso di spesa del {{ feeRate }}%, il tuo intero capitale di {{ capital }}{{ currencySymbol }} svanirà in soli {{ years }} anni, mentre i consulenti si godono le vacanze e tu ti chiedi dove sia finito il tuo denaro!"
+}
