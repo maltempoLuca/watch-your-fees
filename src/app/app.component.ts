@@ -216,54 +216,37 @@ export class AppComponent implements OnInit {
                 // @ts-ignore
                 const canvasRect = this.canvas.getBoundingClientRect();
 
-                // Check if the mouse is inside the chart area
-                const isMouseInsideChart = (mouseX: number, mouseY: number) => {
-                  // return (
-                  //   mouseX >= canvasRect.left &&
-                  //   mouseX <= canvasRect.right &&
-                  //   mouseY >= canvasRect.top &&
-                  //   mouseY <= canvasRect.bottom
-                  // );
-                  return true;
-                };
-
-                // Get the mouse position from the tooltip model
-                const mouseX = tooltipModel.tooltip.x;
-                const mouseY = tooltipModel.tooltip.y;
 
                 if (tooltipModel.tooltip.dataPoints && tooltipModel.tooltip.dataPoints.length > 0) {
                   const dataPoint = tooltipModel.tooltip.dataPoints[0]; // Get the first data point
                   const index = dataPoint.dataIndex; // Get the index of the hovered point
 
                   // Only show tooltip if mouse is inside the chart area
-                  if (isMouseInsideChart(mouseX, mouseY)) {
-                    // Retrieve your fee values
-                    const lowerFeeValue = lowerFees[index];
-                    const baseFeeValue = baseFees[index];
-                    const higherFeeValue = higherFees[index];
-                    const calculatedValue = this.performCustomCalculation(lowerFeeValue, baseFeeValue, higherFeeValue);
+                  // Retrieve your fee values
+                  const lowerFeeValue = lowerFees[index];
+                  const baseFeeValue = baseFees[index];
+                  const higherFeeValue = higherFees[index];
+                  const calculatedValue = this.performCustomCalculation(lowerFeeValue, baseFeeValue, higherFeeValue);
 
-                    const testoToolTip: string = `Dopo ${years[index]} anni avrai pagato in commissioni:\n` +
-                      `a 2% = ${calculatedValue} ${this.getCurrencySymbol()}\n` +
-                      `a 3% = ${calculatedValue} ${this.getCurrencySymbol()}\n` +
-                      `a 4% = ${calculatedValue} ${this.getCurrencySymbol()}\n`;
+                  const testoToolTip: string = `Dopo ${years[index]} anni avrai pagato in commissioni:\n` +
+                    `a 2% = ${calculatedValue} ${this.getCurrencySymbol()}\n` +
+                    `a 3% = ${calculatedValue} ${this.getCurrencySymbol()}\n` +
+                    `a 4% = ${calculatedValue} ${this.getCurrencySymbol()}\n`;
 
-                    // Set tooltip content
-                    tooltipEl.innerHTML = testoToolTip;
-                    tooltipEl.style.opacity = '1';
+                  // Set tooltip content
+                  tooltipEl.innerHTML = testoToolTip;
+                  console.log('opacity set to 1')
+                  tooltipEl.style.opacity = '1';
 
-                    // Position the tooltip at the center of the chart canvas
-                    const canvasSize = canvasRect.bottom - canvasRect.top;
-                    const centerX = canvasRect.left + canvasRect.width / 2 - tooltipEl.clientWidth / 2; // Centered horizontally
-                    const topY = canvasRect.top - tooltipEl.clientHeight + canvasSize / 5; // Above the chart
+                  // Position the tooltip at the center of the chart canvas
+                  const canvasSize = canvasRect.bottom - canvasRect.top;
+                  const centerX = canvasRect.left + canvasRect.width / 2 - tooltipEl.clientWidth / 2; // Centered horizontally
+                  const topY = canvasRect.top - tooltipEl.clientHeight + canvasSize / 5; // Above the chart
 
-                    tooltipEl.style.left = `${centerX}px`;
-                    tooltipEl.style.top = `${topY}px`;
-                  } else {
-                    tooltipEl.style.opacity = '0'; // Hide tooltip if mouse is outside
-                  }
+                  tooltipEl.style.left = `${centerX}px`;
+                  tooltipEl.style.top = `${topY}px`;
                 } else {
-                  tooltipEl.style.opacity = '0'; // Hide tooltip when not active
+                  tooltipEl.style.opacity = '0';
                 }
               },
             },
@@ -281,20 +264,16 @@ export class AppComponent implements OnInit {
         },
       });
 
-      this.canvas.addEventListener('mouseenter', () => {
-        // When mouse enters the chart area, set tooltip opacity to 1 if needed
-        const tooltipEl = document.getElementById('custom-tooltip');
-        if (tooltipEl) {
-          tooltipEl.style.opacity = '1';
-        }
-      });
-
-      this.canvas.addEventListener('mouseleave', () => {
+      this.canvas.addEventListener('mouseout', () => {
         // When mouse leaves the chart area, set tooltip opacity to 0
         const tooltipEl = document.getElementById('custom-tooltip');
         if (tooltipEl) {
-          tooltipEl.style.opacity = '0';
+          console.log('it enters here but the tooltip remains visible');
+          setTimeout(() => {
+            tooltipEl.style.opacity = '0';
+          }, 50)
         }
+        this.investmentChart?.update();
       });
     }
   }
@@ -303,19 +282,6 @@ export class AppComponent implements OnInit {
   private performCustomCalculation(lowerFee: number, baseFee: number, higherFee: number): number {
     // Example: Simple average, replace with your actual calculation logic
     return (lowerFee + baseFee + higherFee) / 3;
-  }
-
-// Utility function to debounce a function
-  private debounce(func: Function, wait: number) {
-    let timeout: any; // Use 'any' to avoid TypeScript errors with setTimeout
-    return function executedFunction(...args: any) {
-      const later = () => {
-        clearTimeout(timeout);
-        func(...args);
-      };
-      clearTimeout(timeout);
-      timeout = setTimeout(later, wait);
-    };
   }
 
 
