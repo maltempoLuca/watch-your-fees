@@ -216,27 +216,52 @@ export class AppComponent implements OnInit {
                 // @ts-ignore
                 const canvasRect = this.canvas.getBoundingClientRect();
 
+                // Check if the mouse is inside the chart area
+                const isMouseInsideChart = (mouseX: number, mouseY: number) => {
+                  // return (
+                  //   mouseX >= canvasRect.left &&
+                  //   mouseX <= canvasRect.right &&
+                  //   mouseY >= canvasRect.top &&
+                  //   mouseY <= canvasRect.bottom
+                  // );
+                  return true;
+                };
+
+                // Get the mouse position from the tooltip model
+                const mouseX = tooltipModel.tooltip.x;
+                const mouseY = tooltipModel.tooltip.y;
+
                 if (tooltipModel.tooltip.dataPoints && tooltipModel.tooltip.dataPoints.length > 0) {
                   const dataPoint = tooltipModel.tooltip.dataPoints[0]; // Get the first data point
                   const index = dataPoint.dataIndex; // Get the index of the hovered point
 
-                  // Retrieve your fee values
-                  const lowerFeeValue = lowerFees[index];
-                  const baseFeeValue = baseFees[index];
-                  const higherFeeValue = higherFees[index];
-                  const calculatedValue = this.performCustomCalculation(lowerFeeValue, baseFeeValue, higherFeeValue);
+                  // Only show tooltip if mouse is inside the chart area
+                  if (isMouseInsideChart(mouseX, mouseY)) {
+                    // Retrieve your fee values
+                    const lowerFeeValue = lowerFees[index];
+                    const baseFeeValue = baseFees[index];
+                    const higherFeeValue = higherFees[index];
+                    const calculatedValue = this.performCustomCalculation(lowerFeeValue, baseFeeValue, higherFeeValue);
 
-                  // Set tooltip content
-                  tooltipEl.innerHTML = `Calculated value for ${years[index]}: ${calculatedValue}`;
-                  tooltipEl.style.opacity = '1';
+                    const testoToolTip: string = `Dopo ${years[index]} anni avrai pagato in commissioni:\n` +
+                      `a 2% = ${calculatedValue} ${this.getCurrencySymbol()}\n` +
+                      `a 3% = ${calculatedValue} ${this.getCurrencySymbol()}\n` +
+                      `a 4% = ${calculatedValue} ${this.getCurrencySymbol()}\n`;
 
-                  // Position the tooltip at the center of the chart canvas
-                  const canvasSize = canvasRect.bottom - canvasRect.top
-                  const centerX = canvasRect.left + canvasRect.width / 2 - tooltipEl.clientWidth / 2; // Centered horizontally
-                  const topY = canvasRect.top - tooltipEl.clientHeight + canvasSize / 5; // Above the chart
+                    // Set tooltip content
+                    tooltipEl.innerHTML = testoToolTip;
+                    tooltipEl.style.opacity = '1';
 
-                  tooltipEl.style.left = `${centerX}px`;
-                  tooltipEl.style.top = `${topY}px`;
+                    // Position the tooltip at the center of the chart canvas
+                    const canvasSize = canvasRect.bottom - canvasRect.top;
+                    const centerX = canvasRect.left + canvasRect.width / 2 - tooltipEl.clientWidth / 2; // Centered horizontally
+                    const topY = canvasRect.top - tooltipEl.clientHeight + canvasSize / 5; // Above the chart
+
+                    tooltipEl.style.left = `${centerX}px`;
+                    tooltipEl.style.top = `${topY}px`;
+                  } else {
+                    tooltipEl.style.opacity = '0'; // Hide tooltip if mouse is outside
+                  }
                 } else {
                   tooltipEl.style.opacity = '0'; // Hide tooltip when not active
                 }
@@ -256,72 +281,21 @@ export class AppComponent implements OnInit {
         },
       });
 
-
-// Adding the mousemove event listener
-      this.canvas.addEventListener('mousemove', this.debounce((event: MouseEvent) => {
-        if (!this.canvas || !this.investmentChart || !this.investmentChart.tooltip) {
-          return;
+      this.canvas.addEventListener('mouseenter', () => {
+        // When mouse enters the chart area, set tooltip opacity to 1 if needed
+        const tooltipEl = document.getElementById('custom-tooltip');
+        if (tooltipEl) {
+          tooltipEl.style.opacity = '1';
         }
+      });
 
-        // Get the bounding rectangle of the chart canvas
-        const canvasRect = this.canvas.getBoundingClientRect();
-
-        // Check if the mouse is inside the chart
-        const isMouseInsideChart =
-          event.clientX >= canvasRect.left &&
-          event.clientX <= canvasRect.right &&
-          event.clientY >= canvasRect.top &&
-          event.clientY <= canvasRect.bottom;
-
-        // Get the nearest point(s) at the mouse position with intersect set to false
-        const points = this.investmentChart.getElementsAtEventForMode(event, 'nearest', {intersect: false}, true);
-
-        if (isMouseInsideChart && points.length) {
-          // Set active elements for the tooltip
-          this.investmentChart.tooltip.setActiveElements(points, {x: event.clientX, y: event.clientY});
-
-          // Update tooltip content
-          const point = points[0];
-          const dataIndex = point.index;
-          // @ts-ignore
-          const year = this.investmentChart.data.labels[dataIndex];
-
-          // Position the tooltip
-          const tooltipEl = document.getElementById('custom-tooltip');
-          if (tooltipEl) {
-            const lowerFeeValue = lowerFees[dataIndex];
-            const baseFeeValue = baseFees[dataIndex];
-            const higherFeeValue = higherFees[dataIndex];
-            const calculatedValue = this.performCustomCalculation(lowerFeeValue, baseFeeValue, higherFeeValue);
-            tooltipEl.innerHTML = `Calculated value for ${years[dataIndex]}: ${calculatedValue}`;
-            tooltipEl.style.opacity = '1';
-            // Position the tooltip
-            const canvasSize = canvasRect.bottom - canvasRect.top;
-            const centerX = canvasRect.left + canvasRect.width / 2 - tooltipEl.clientWidth / 2;
-            const topY = canvasRect.top - tooltipEl.clientHeight + canvasSize / 5;
-            tooltipEl.style.left = `${centerX}px`;
-            tooltipEl.style.top = `${topY}px`;
-          }
-        } else {
-          // No points detected, hide tooltip
-          this.investmentChart.tooltip.setActiveElements([], {x: event.clientX, y: event.clientY});
-          const tooltipEl = document.getElementById('custom-tooltip');
-          if (tooltipEl) {
-            tooltipEl.style.opacity = '0'; // Hide tooltip
-          }
+      this.canvas.addEventListener('mouseleave', () => {
+        // When mouse leaves the chart area, set tooltip opacity to 0
+        const tooltipEl = document.getElementById('custom-tooltip');
+        if (tooltipEl) {
+          tooltipEl.style.opacity = '0';
         }
-
-        // Use requestAnimationFrame to limit updates
-        if (!this.isAnimating) {
-          this.isAnimating = true;
-          requestAnimationFrame(() => {
-            // @ts-ignore
-            this.investmentChart.update(); // Update the chart
-            this.isAnimating = false;
-          });
-        }
-      }, 100)); // 100 milliseconds debounce
-
+      });
     }
   }
 
