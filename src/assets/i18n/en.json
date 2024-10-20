@@ -10,6 +10,6 @@
   "INVESTMENT_PERIOD_LABEL": "Investment period (years)",
   "YEARLY_PERFORMANCE_LABEL": "Yearly performance (%)",
   "FEES_LABEL": "Fees (%)",
-  "FEE_RATE_MESSAGE": "After {{ years }} years, the advisor will have pocketed your entire wealth in fees, without lifting a finger or taking any risk. Brilliant, isn't it?",
+  "FEE_RATE_MESSAGE": "After {{ years }} years, the advisor will have pocketed your entire wealth in fees without lifting a finger or taking any risk. Brilliant, isn't it?",
   "CAPITAL_FEES_TOOLTIP": "After {{years}} years, you will have paid in fees:\nat {{lowerFeeRate}}% = {{lowerPrincipal}}{{currency}}\nat {{baseFeeRate}}% = {{basePrincipal}}{{currency}}\nat {{higherFeeRate}}% = {{higherPrincipal}}{{currency}}"
 }

@@ -10,6 +10,6 @@
   "INVESTMENT_PERIOD_LABEL": "Periodo di investimento (anni)",
   "YEARLY_PERFORMANCE_LABEL": "Rendimento annuale (%)",
   "FEES_LABEL": "Spese (%)",
-  "FEE_RATE_MESSAGE": "Dopo {{ years }} anni, il consulente si sarà intascato il tuo intero patrimonio in commissioni, senza mai alzare un dito o correre alcun rischio. Facile, no?",
+  "FEE_RATE_MESSAGE": "Dopo {{ years }} anni, il consulente si sarà intascato il tuo intero patrimonio in commissioni senza mai alzare un dito o correre alcun rischio. Facile, no?",
   "CAPITAL_FEES_TOOLTIP": "Dopo {{years}} anni avrai pagato in commissioni:\nal {{lowerFeeRate}}% = {{lowerPrincipal}}{{currency}}\nal {{baseFeeRate}}% = {{basePrincipal}}{{currency}}\nal {{higherFeeRate}}% = {{higherPrincipal}}{{currency}}"
 }
