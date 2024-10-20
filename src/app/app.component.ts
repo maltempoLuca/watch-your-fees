@@ -92,9 +92,6 @@ export class AppComponent implements OnInit {
     const baseFeeRate = formsValue.speseAnnue / 100;
     const lowerFeeRate = Math.max(0, baseFeeRate - 0.01);
     const higherFeeRate = Math.max(0, baseFeeRate + 0.01);
-    console.log('lowerFeeRate ' + lowerFeeRate);
-    console.log('baseFeeRate ' + baseFeeRate);
-    console.log('higherFeeRate ' + higherFeeRate);
     this.investmentForm.get('speseAnnueInferiori')?.patchValue(Math.round(lowerFeeRate * 100));
     this.investmentForm.get('speseAnnueSuperiori')?.patchValue(Math.round(higherFeeRate * 100));
 
@@ -237,13 +234,6 @@ export class AppComponent implements OnInit {
                   const lowerFeesPrincipal = Math.round(calculatedValueBase - lowerFees[index]);
                   const higherFeesPrincipal = Math.round(calculatedValueBase - higherFees[index]);
 
-
-                  if (yearsOfCompound == 1 || yearsOfCompound == 2 || yearsOfCompound == 3) {
-                    console.log('calculatedValueBase ' + calculatedValueBase);
-                    console.log('baseFeesPrincipal ' + baseFees[index]);
-                    console.log('years of compound ' + yearsOfCompound);
-                  }
-
                   // Set tooltip content
                   tooltipEl.innerHTML = this.translate.instant('CAPITAL_FEES_TOOLTIP', {
                     years: yearsOfCompound,
@@ -288,7 +278,6 @@ export class AppComponent implements OnInit {
         // When mouse leaves the chart area, set tooltip opacity to 0
         const tooltipEl = document.getElementById('custom-tooltip');
         if (tooltipEl) {
-          console.log('it enters here but the tooltip remains visible');
           setTimeout(() => {
             tooltipEl.style.opacity = '0';
           }, 50)
