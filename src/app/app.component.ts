@@ -12,7 +12,7 @@ import {
   Tooltip
 } from 'chart.js';
 import {FormControl, FormGroup} from '@angular/forms';
-import {formatCurrency} from '@angular/common';
+import {DecimalPipe, formatCurrency} from '@angular/common';
 import {TranslateService} from '@ngx-translate/core';
 
 // @ts-ignore
@@ -20,7 +20,7 @@ import {TranslateService} from '@ngx-translate/core';
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
-  providers: [{provide: LOCALE_ID, useValue: 'en-US'}], // Set default locale
+  providers: [{provide: LOCALE_ID, useValue: 'en-US'}, DecimalPipe], // Set default locale
 
 })
 export class AppComponent implements OnInit {
@@ -46,7 +46,7 @@ export class AppComponent implements OnInit {
     }, 345); // Match this duration with the CSS transition duration
   }
 
-  constructor(private readonly translate: TranslateService) {
+  constructor(private readonly translate: TranslateService, private decimalPipe: DecimalPipe) {
     // Set default language
     this.translate.setDefaultLang('en');
     this.translate.use('en');
@@ -237,12 +237,12 @@ export class AppComponent implements OnInit {
                   // Set tooltip content
                   tooltipEl.innerHTML = this.translate.instant('CAPITAL_FEES_TOOLTIP', {
                     years: yearsOfCompound,
-                    lowerFeeRate: speseAnnueInferiori,
-                    baseFeeRate: this.investmentForm.get('speseAnnue')?.value,
-                    higherFeeRate: speseAnnueSuperiori,
-                    lowerPrincipal: lowerFeesPrincipal,
-                    basePrincipal: baseFeesPrincipal,
-                    higherPrincipal: higherFeesPrincipal,
+                    lowerFeeRate: this.decimalPipe.transform(speseAnnueInferiori, '1.2-2'),
+                    baseFeeRate: this.decimalPipe.transform(this.investmentForm.get('speseAnnue')?.value, '1.2-2'),
+                    higherFeeRate: this.decimalPipe.transform(speseAnnueSuperiori, '1.2-2'),
+                    lowerPrincipal: this.decimalPipe.transform(lowerFeesPrincipal, '1.2-2'),
+                    basePrincipal: this.decimalPipe.transform(baseFeesPrincipal, '1.2-2'),
+                    higherPrincipal: this.decimalPipe.transform(higherFeesPrincipal, '1.2-2'),
                     currency: this.getCurrencySymbol()
                   });
 

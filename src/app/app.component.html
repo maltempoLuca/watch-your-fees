@@ -52,8 +52,8 @@
   <div class="mt-5 text-center">
     <h2 class="fw-bold">{{
         'FEE_RATE_MESSAGE' | translate: {
-          feeRate: investmentForm.value?.speseAnnue,
-          capital: investmentForm.value?.capitaleIniziale,
+          feeRate: investmentForm.value?.speseAnnue  | number:'1.2-2',
+          capital: investmentForm.value?.capitaleIniziale  | number:'1.2-2',
           years: yearsToDoubleCapitalInExpenses(),
           currencySymbol: getCurrencySymbol()
         }
