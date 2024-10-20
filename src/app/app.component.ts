@@ -1,4 +1,4 @@
-import {Component, LOCALE_ID, OnInit} from '@angular/core';
+import {Component, HostListener, LOCALE_ID, OnInit} from '@angular/core';
 import {
   CategoryScale,
   Chart,
@@ -32,12 +32,11 @@ export class AppComponent implements OnInit {
   ctx: any;
   americanFlag: string = 'assets/us-flag.png'; // No leading './' or '/'
   italianFlag: string = 'assets/it-flag.png';
+  isMobile: boolean = false;
 
   currentFlag: string = this.americanFlag; // Default to American flag
-  showEffect = false; // Control visibility of the effect
   protected readonly formatCurrency = formatCurrency;
   fadeEffect: boolean = false; // Control visibility of the effect
-  private isAnimating: boolean = false;
 
   private showFadeEffect(f: () => void) {
     this.fadeEffect = true; // Start the fade effect
@@ -47,7 +46,7 @@ export class AppComponent implements OnInit {
     }, 345); // Match this duration with the CSS transition duration
   }
 
-  constructor(private translate: TranslateService) {
+  constructor(private readonly translate: TranslateService) {
     // Set default language
     this.translate.setDefaultLang('en');
     this.translate.use('en');
@@ -76,6 +75,17 @@ export class AppComponent implements OnInit {
     window.addEventListener('resize', () => {
       this.investmentChart?.resize();
     });
+    this.checkScreenSize();
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: Event) {
+    // Check screen size on every resize
+    this.checkScreenSize();
+  }
+
+  private checkScreenSize() {
+    this.isMobile = window.matchMedia('(max-width: 768px)').matches;
   }
 
 
@@ -104,12 +114,6 @@ export class AppComponent implements OnInit {
     }
 
     this.createLineChart(years, capitalsBaseFees, capitalsLowerFees, capitalsHigherFees);
-  }
-
-// Helper function to calculate capital based on fee rate
-  private calculateCapital(initialCapital: number, annualReturnRate: number, feeRate: number, years: number): number {
-    const netRate = (1 + annualReturnRate) * (1 - feeRate); // Apply both interest and fee
-    return Math.round(initialCapital * Math.pow(netRate, years));
   }
 
 
@@ -216,15 +220,11 @@ export class AppComponent implements OnInit {
                 // @ts-ignore
                 const canvasRect = this.canvas.getBoundingClientRect();
 
-
                 if (tooltipModel.tooltip.dataPoints && tooltipModel.tooltip.dataPoints.length > 0) {
                   const dataPoint = tooltipModel.tooltip.dataPoints[0]; // Get the first data point
                   const index = dataPoint.dataIndex; // Get the index of the hovered point
 
-                  // Only show tooltip if mouse is inside the chart area
-                  // Retrieve your fee values
                   const yearsOfCompound = Number(years[index]) - Number(years[0]);
-                  const speseAnnue = this.investmentForm.get('speseAnnue')?.value;
                   const speseAnnueInferiori = this.investmentForm.get('speseAnnueInferiori')?.value;
                   const speseAnnueSuperiori = this.investmentForm.get('speseAnnueSuperiori')?.value;
                   const rendimentoAnnuo = this.investmentForm.get('rendimentoAnnuo')?.value;
@@ -249,12 +249,25 @@ export class AppComponent implements OnInit {
                   tooltipEl.style.opacity = '1';
 
                   // Position the tooltip at the center of the chart canvas
+                  // Calculate the left position (centered horizontally)
+                  const left = canvasRect.left + canvasRect.width / 2 - tooltipEl.clientWidth / 2;
                   const canvasSize = canvasRect.bottom - canvasRect.top;
-                  const centerX = canvasRect.left + canvasRect.width / 2 - tooltipEl.clientWidth / 2; // Centered horizontally
-                  const topY = canvasRect.top - tooltipEl.clientHeight + canvasSize / 5; // Above the chart
 
-                  tooltipEl.style.left = `${centerX}px`;
-                  tooltipEl.style.top = `${topY}px`;
+                  // Calculate the scroll offset for proper positioning
+                  const scrollTop = window.scrollY || (document.documentElement?.scrollTop) || document.body.scrollTop;
+                  const scrollLeft = window.scrollX || (document.documentElement?.scrollLeft) || document.body.scrollLeft;
+
+                  if (!this.isMobile) {
+                    // Desktop: Place the tooltip just above the chart
+                    const top = canvasRect.top + scrollTop - tooltipEl.clientHeight + canvasSize / 5;
+                    tooltipEl.style.left = `${left + scrollLeft}px`;
+                    tooltipEl.style.top = `${top}px`;
+                  } else {
+                    // Mobile: Position the tooltip below the chart
+                    const top = canvasRect.top + scrollTop + tooltipEl.clientHeight / 2 + tooltipEl.clientHeight / 7;
+                    tooltipEl.style.left = `${left + scrollLeft}px`;
+                    tooltipEl.style.top = `${top}px`;
+                  }
                 } else {
                   tooltipEl.style.opacity = '0';
                 }

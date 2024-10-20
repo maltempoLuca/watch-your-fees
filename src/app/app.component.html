@@ -16,27 +16,37 @@
   <div class="row g-3">
     <div class="col-xs-12 col-md-6 col-lg-3">
       <label
-        class="form-label">{{ 'INVESTED_CAPITAL_LABEL' | translate: {currencySymbol: getCurrencySymbol()} }}</label>
-      <input class="form-control" formControlName="capitaleIniziale" type="number">
+        class="form-label"
+        for="capitaleIniziale">
+        {{ 'INVESTED_CAPITAL_LABEL' | translate: {currencySymbol: getCurrencySymbol()} }}
+      </label>
+      <input
+        id="capitaleIniziale"
+        class="form-control"
+        formControlName="capitaleIniziale"
+        type="number">
     </div>
     <div class="col-xs-12 col-md-6 col-lg-3">
-      <label class="form-label">{{ 'INVESTMENT_PERIOD_LABEL' | translate }}</label>
-      <input class="form-control" formControlName="anni" type="number">
+      <label class="form-label" for="anni">{{ 'INVESTMENT_PERIOD_LABEL' | translate }}</label>
+      <input id="anni" class="form-control" formControlName="anni" type="number">
     </div>
+
     <div class="col-xs-12 col-md-6 col-lg-3">
-      <label class="form-label">{{ 'YEARLY_PERFORMANCE_LABEL' | translate }}</label>
-      <input class="form-control" formControlName="rendimentoAnnuo" type="number">
+      <label class="form-label" for="rendimentoAnnuo">{{ 'YEARLY_PERFORMANCE_LABEL' | translate }}</label>
+      <input id="rendimentoAnnuo" class="form-control" formControlName="rendimentoAnnuo" type="number">
     </div>
+
     <div class="col-xs-12 col-md-6 col-lg-3">
-      <label class="form-label">{{ 'FEES_LABEL' | translate }}</label>
-      <input class="form-control" formControlName="speseAnnue" type="number">
+      <label class="form-label" for="speseAnnue">{{ 'FEES_LABEL' | translate }}</label>
+      <input id="speseAnnue" class="form-control" formControlName="speseAnnue" type="number">
     </div>
   </div>
 
   <div class="mt-5">
-    <canvas id="investmentChart" style="max-height: 400px; width: 100%;"></canvas>
+    <canvas id="investmentChart"></canvas>
   </div>
-  <div id="custom-tooltip" class="custom-tooltip" style="opacity: 0; position: absolute; pointer-events: none;"></div>
+  <div id="custom-tooltip" class="custom-tooltip" [ngClass]="isMobile ? 'custom-tooltip-mobile' :''"
+       style="opacity: 0; position: absolute; pointer-events: none;"></div>
 
   <!-- Output -->
   <div class="mt-5 text-center">
