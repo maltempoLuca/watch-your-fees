@@ -58,7 +58,9 @@ export class AppComponent implements OnInit {
       capitaleIniziale: new FormControl(100000),
       rendimentoAnnuo: new FormControl(7),
       anni: new FormControl(30),
-      speseAnnue: new FormControl(3)
+      speseAnnue: new FormControl(3),
+      speseAnnueInferiori: new FormControl(3),
+      speseAnnueSuperiori: new FormControl(3),
     });
   }
 
@@ -86,21 +88,22 @@ export class AppComponent implements OnInit {
     const capitalsLowerFees: number[] = [];
     const capitalsHigherFees: number[] = [];
 
-    const initialCapital = formsValue.capitaleIniziale;
-    const annualReturnRate = formsValue.rendimentoAnnuo / 100;
-
     // Fee rates for the three scenarios
     const baseFeeRate = formsValue.speseAnnue / 100;
-    const lowerFeeRate = Math.max(0, baseFeeRate - 0.01); // Ensure it doesn't go below 0%
-    const higherFeeRate = Math.min(annualReturnRate - 0.01, baseFeeRate + 0.01); // Ensure it's less than interest
+    const lowerFeeRate = Math.max(0, baseFeeRate - 0.01);
+    const higherFeeRate = Math.max(0, baseFeeRate + 0.01);
+    console.log('lowerFeeRate ' + lowerFeeRate);
+    console.log('baseFeeRate ' + baseFeeRate);
+    console.log('higherFeeRate ' + higherFeeRate);
+    this.investmentForm.get('speseAnnueInferiori')?.patchValue(Math.round(lowerFeeRate * 100));
+    this.investmentForm.get('speseAnnueSuperiori')?.patchValue(Math.round(higherFeeRate * 100));
 
     for (let i = 0; i < +formsValue.anni; i++) {
       const year = currentYear + i;
       years.push(year.toString());
-
-      capitalsBaseFees.push(this.calculateCapital(initialCapital, annualReturnRate, baseFeeRate, i));
-      capitalsLowerFees.push(this.calculateCapital(initialCapital, annualReturnRate, lowerFeeRate, i));
-      capitalsHigherFees.push(this.calculateCapital(initialCapital, annualReturnRate, higherFeeRate, i));
+      capitalsBaseFees.push(this.compoundedPrincipal(this.investmentForm.get('capitaleIniziale')?.value, i, (this.investmentForm.get('rendimentoAnnuo')?.value - this.investmentForm.get('speseAnnue')?.value)));
+      capitalsLowerFees.push(this.compoundedPrincipal(this.investmentForm.get('capitaleIniziale')?.value, i, (this.investmentForm.get('rendimentoAnnuo')?.value - this.investmentForm.get('speseAnnueInferiori')?.value)));
+      capitalsHigherFees.push(this.compoundedPrincipal(this.investmentForm.get('capitaleIniziale')?.value, i, (this.investmentForm.get('rendimentoAnnuo')?.value - this.investmentForm.get('speseAnnueSuperiori')?.value)));
     }
 
     this.createLineChart(years, capitalsBaseFees, capitalsLowerFees, capitalsHigherFees);
@@ -108,10 +111,10 @@ export class AppComponent implements OnInit {
 
 // Helper function to calculate capital based on fee rate
   private calculateCapital(initialCapital: number, annualReturnRate: number, feeRate: number, years: number): number {
-    const accumulatedInterest = (initialCapital * (1 + annualReturnRate) ** (years + 1)) - initialCapital;
-    const accumulatedFee = (initialCapital * (1 + feeRate) ** (years + 1)) - initialCapital;
-    return initialCapital + accumulatedInterest - accumulatedFee;
+    const netRate = (1 + annualReturnRate) * (1 - feeRate); // Apply both interest and fee
+    return Math.round(initialCapital * Math.pow(netRate, years));
   }
+
 
   yearsToDoubleCapitalInExpenses() {
     const formsValue = this.investmentForm.value;
@@ -178,7 +181,7 @@ export class AppComponent implements OnInit {
               pointRadius: 0,
             },
             {
-              label: this.translate.instant('CAPITAL_WITH_BASE_FEES'),
+              label: this.translate.instant('CAPITAL_WITH_BASE_FEES', {baseFeeRate: this.investmentForm.get('speseAnnue')?.value}),
               data: baseFees,
               borderColor: '#f1c40f',
               backgroundColor: 'rgba(241, 196, 15, 0.2)',
@@ -223,19 +226,36 @@ export class AppComponent implements OnInit {
 
                   // Only show tooltip if mouse is inside the chart area
                   // Retrieve your fee values
-                  const lowerFeeValue = lowerFees[index];
-                  const baseFeeValue = baseFees[index];
-                  const higherFeeValue = higherFees[index];
-                  const calculatedValue = this.performCustomCalculation(lowerFeeValue, baseFeeValue, higherFeeValue);
+                  const yearsOfCompound = Number(years[index]) - Number(years[0]);
+                  const speseAnnue = this.investmentForm.get('speseAnnue')?.value;
+                  const speseAnnueInferiori = this.investmentForm.get('speseAnnueInferiori')?.value;
+                  const speseAnnueSuperiori = this.investmentForm.get('speseAnnueSuperiori')?.value;
+                  const rendimentoAnnuo = this.investmentForm.get('rendimentoAnnuo')?.value;
 
-                  const testoToolTip: string = `Dopo ${years[index]} anni avrai pagato in commissioni:\n` +
-                    `a 2% = ${calculatedValue} ${this.getCurrencySymbol()}\n` +
-                    `a 3% = ${calculatedValue} ${this.getCurrencySymbol()}\n` +
-                    `a 4% = ${calculatedValue} ${this.getCurrencySymbol()}\n`;
+                  let calculatedValueBase = this.compoundedPrincipal(this.investmentForm.get('capitaleIniziale')?.value, yearsOfCompound, rendimentoAnnuo);
+                  const baseFeesPrincipal = Math.round(calculatedValueBase - baseFees[index]);
+                  const lowerFeesPrincipal = Math.round(calculatedValueBase - lowerFees[index]);
+                  const higherFeesPrincipal = Math.round(calculatedValueBase - higherFees[index]);
+
+
+                  if (yearsOfCompound == 1 || yearsOfCompound == 2 || yearsOfCompound == 3) {
+                    console.log('calculatedValueBase ' + calculatedValueBase);
+                    console.log('baseFeesPrincipal ' + baseFees[index]);
+                    console.log('years of compound ' + yearsOfCompound);
+                  }
 
                   // Set tooltip content
-                  tooltipEl.innerHTML = testoToolTip;
-                  console.log('opacity set to 1')
+                  tooltipEl.innerHTML = this.translate.instant('CAPITAL_FEES_TOOLTIP', {
+                    years: yearsOfCompound,
+                    lowerFeeRate: speseAnnueInferiori,
+                    baseFeeRate: this.investmentForm.get('speseAnnue')?.value,
+                    higherFeeRate: speseAnnueSuperiori,
+                    lowerPrincipal: lowerFeesPrincipal,
+                    basePrincipal: baseFeesPrincipal,
+                    higherPrincipal: higherFeesPrincipal,
+                    currency: this.getCurrencySymbol()
+                  });
+
                   tooltipEl.style.opacity = '1';
 
                   // Position the tooltip at the center of the chart canvas
@@ -279,10 +299,8 @@ export class AppComponent implements OnInit {
   }
 
   // Example function for your custom text
-  private performCustomCalculation(lowerFee: number, baseFee: number, higherFee: number): number {
-    // Example: Simple average, replace with your actual calculation logic
-    return (lowerFee + baseFee + higherFee) / 3;
+  private compoundedPrincipal(startingCapital: number, years: number, ratePercentage: number): number {
+    return Math.round(startingCapital * Math.pow((1 + ratePercentage / 100), years));
   }
-
 
 }
