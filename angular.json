@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "how-banks-steal-your-money-app": {
+    "watch-your-fees": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/how-banks-steal-your-money-app",
+            "outputPath": "dist/watch-your-fees",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -26,8 +26,7 @@
                 "glob": "**/*",
                 "input": "public"
               },
-              "src/assets",
-              "src/favicon.ico"
+              "src/assets"
             ],
             "styles": [
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
@@ -62,10 +61,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "how-banks-steal-your-money-app:build:production"
+              "buildTarget": "watch-your-fees:build:production"
             },
             "development": {
-              "buildTarget": "how-banks-steal-your-money-app:build:development"
+              "buildTarget": "watch-your-fees:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -87,8 +86,7 @@
                 "glob": "**/*",
                 "input": "public"
               },
-              "src/assets",
-              "src/favicon.ico"
+              "src/assets"
             ],
             "styles": [
               "src/styles.css"

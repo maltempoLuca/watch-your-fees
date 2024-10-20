@@ -1,13 +1,13 @@
 <div (change)="calculateFeesOnCapital()" [formGroup]="investmentForm" class="container py-5"
      [ngClass]="{'fade': !fadeEffect, 'fade-out': fadeEffect}">
-  <h1 class="text-center fw-bold mb-4" i18n>{{ 'WATCH_FEES' | translate }}
+  <h1 class="text-center fw-bold mb-4" style="font-weight: bolder;" i18n>{{ 'WATCH_FEES' | translate }}
     <div class="flag-toggle d-inline-block ms-3">
       <button (click)="setFlag('us')" [disabled]="currentFlag === americanFlag" class="btn btn-sm btn-outline-primary">
-        <img src="assets/us-flag.png" alt="American Flag" class="flag-icon"
+        <img [src]="americanFlag" alt="American Flag" class="flag-icon"
              [class.disabled]="currentFlag !== americanFlag"/>
       </button>
       <button (click)="setFlag('it')" [disabled]="currentFlag === italianFlag" class="btn btn-sm btn-outline-primary">
-        <img src="assets/it-flag.png" alt="Italian Flag" class="flag-icon"
+        <img [src]="italianFlag" alt="Italian Flag" class="flag-icon"
              [class.disabled]="currentFlag !== italianFlag"/>
       </button>
     </div>
@@ -66,3 +66,6 @@
 <!--  Flaticon</a>-->
 <!--<a href="https://www.flaticon.com/free-icons/italy" title="italy icons">Italy icons created by Sudowoodo - -->
 <!--  Flaticon</a>-->
+<!--<a target="_blank" href="https://icons8.com/icon/59840/money-bag">Money Bag</a> icon by <a target="_blank"-->
+<!--                                                                                           href="https://icons8.com">Icons8</a>-->
+<!--<a target="_blank" href="https://icons8.com/icon/61699/euro-money">Euro Money</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>-->

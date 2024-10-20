@@ -51,3 +51,8 @@ canvas {
   display: block;
   max-height: 400px;
 }
+
+.text-bold {
+  font-weight: 900; /* or use a higher numeric value, e.g., 900 */
+}
+

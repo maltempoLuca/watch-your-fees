@@ -1,4 +1,4 @@
-import {Component, HostListener, LOCALE_ID, OnInit} from '@angular/core';
+import {Component, HostListener, LOCALE_ID, OnInit, Renderer2} from '@angular/core';
 import {
   CategoryScale,
   Chart,
@@ -27,11 +27,11 @@ export class AppComponent implements OnInit {
   locale: 'en-US' | 'it-IT' = 'en-US';
   investmentForm: FormGroup;
   investmentChart: Chart | null = null;
-  title = 'how-banks-steal-your-money-app';
+  title = 'watch-your-fees';
   canvas: HTMLCanvasElement | undefined;
   ctx: any;
-  americanFlag: string = 'assets/us-flag.png'; // No leading './' or '/'
-  italianFlag: string = 'assets/it-flag.png';
+  americanFlag: string = 'assets/images/us-flag.png'; // No leading './' or '/'
+  italianFlag: string = 'assets/images/it-flag.png';
   isMobile: boolean = false;
 
   currentFlag: string = this.americanFlag; // Default to American flag
@@ -46,7 +46,7 @@ export class AppComponent implements OnInit {
     }, 345); // Match this duration with the CSS transition duration
   }
 
-  constructor(private readonly translate: TranslateService, private decimalPipe: DecimalPipe) {
+  constructor(private readonly translate: TranslateService, private decimalPipe: DecimalPipe, private renderer: Renderer2) {
     // Set default language
     this.translate.setDefaultLang('en');
     this.translate.use('en');
@@ -151,6 +151,7 @@ export class AppComponent implements OnInit {
         this.locale = "it-IT";
         this.translate.use('it');
       }
+      this.changeFavicon();
     });
 
   }
@@ -281,8 +282,16 @@ export class AppComponent implements OnInit {
             // axis: 'x', // Optional to limit to x-axis hover only
           },
           scales: {
-            x: { /* ...x-axis config... */},
-            y: { /* ...y-axis config... */},
+            x: {
+              grid: {
+                display: false, // Disable grid lines for x-axis
+              },
+            },
+            y: {
+              grid: {
+                display: true, // Disable grid lines for y-axis
+              },
+            },
           },
         },
       });
@@ -305,4 +314,14 @@ export class AppComponent implements OnInit {
     return Math.round(startingCapital * Math.pow((1 + ratePercentage / 100), years));
   }
 
+  changeFavicon() {
+    let faviconUrl = 'assets/images/icons8-money-bag-30.png'; // default favicon
+
+    if (this.currentFlag === this.italianFlag) {
+      faviconUrl = 'assets/images/icons8-euro-money-30.png';
+    }
+
+    const link: HTMLLinkElement = this.renderer.selectRootElement('link[rel="icon"]', true);
+    this.renderer.setAttribute(link, 'href', faviconUrl);
+  }
 }

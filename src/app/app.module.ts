@@ -6,6 +6,7 @@ import {AppComponent} from './app.component'; // Ensure this path is correct
 import {ReactiveFormsModule} from '@angular/forms';
 import {BrowserModule} from '@angular/platform-browser';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import {NgOptimizedImage} from '@angular/common';
 
 
 // AoT requires an exported function for factories
@@ -27,6 +28,7 @@ export function HttpLoaderFactory(http: HttpClient) {
       }
     }),
     NgbModule,
+    NgOptimizedImage,
   ],
   bootstrap: [AppComponent]
 })
